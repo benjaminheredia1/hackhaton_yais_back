@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Information { 
+  id        Int      @id @default(autoincrement())
+  name      String
+  lastName  String
+  email     String
+  phone     String
+  address   String
+  city      String
+  state     String
+  zip       String
+  country   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Nuevo modelo basado en la imagen de la hoja clínica
+model PatientRecord {
+  id                    Int      @id @default(autoincrement())
+
+  // I. IDENTIFICACIÓN
+  patientName           String   // Paciente
+  bed                   String?  // Cama
+  age                   Int?     // Edad
+  gender                String?  // Sexo
+  primaryDiagnosis      String?  // Diagnóstico Principal
+  daysAdmitted          Int?     // Días de Internación
+
+  // II. SEGURIDAD
+  triageSeverity        String?  // Triage / Gravedad
+  allergies             String?  // Alergias
+  riskFallsBedsores     String?  // Riesgo de Caídas/Escaras
+
+  // III. CONSTANTES
+  heartRate             String?  // Frecuencia Cardíaca (FC)
+  bloodPressure         String?  // Presión Arterial (PA)
+  oxygenSaturation      String?  // Saturación O2 (SatO2)
+  temperature           String?  // Temperatura
+  respiratoryRate       String?  // Frecuencia Respiratoria (FR)
+
+  // IV. ESTADO ACTUAL
+  consciousnessGlasgow  String?  // Conciencia / Glasgow
+  venousAccess          String?  // Vía y Acceso Venoso
+  oxygenTherapy         String?  // Oxigenoterapia
+
+  // V. BALANCE (ml)
+  fluidIntake           Float?   // Ingresos (ml)
+  fluidOutput           Float?   // Egresos (ml)
+  shiftBalance          Float?   // Balance del Turno (ml)
+
+  // VI. PLAN Y PENDIENTES
+  nextMedication        String?  // Próxima Medicación
+  pendingStudies        String?  // Estudios Pendientes
+
+  // VII. EVOLUCIÓN
+  relevantUpdates       String?  // Novedades Relevantes
+
+  // Metadatos
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
