@@ -1,5 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { createCanvas } from 'canvas';
+import { createCanvas, registerFont } from 'canvas';
+import * as path from 'path';
+
+// Registrar fuentes con soporte Unicode ANTES de crear canvas
+const fontsDir = path.join(__dirname, '..', 'fonts');
+try {
+  registerFont(path.join(fontsDir, 'DejaVuSans.ttf'), { family: 'DejaVu', weight: 'normal' });
+  registerFont(path.join(fontsDir, 'DejaVuSans-Bold.ttf'), { family: 'DejaVu', weight: 'bold' });
+} catch {
+  // En desarrollo local las fuentes pueden estar en otra ubicación
+  try {
+    const altDir = path.join(__dirname, '..', '..', 'src', 'fonts');
+    registerFont(path.join(altDir, 'DejaVuSans.ttf'), { family: 'DejaVu', weight: 'normal' });
+    registerFont(path.join(altDir, 'DejaVuSans-Bold.ttf'), { family: 'DejaVu', weight: 'bold' });
+  } catch {
+    console.warn('No se pudieron cargar las fuentes DejaVu, usando fuentes del sistema');
+  }
+}
 
 /**
  * Datos del paciente que se reciben en el body del POST.
@@ -75,7 +92,7 @@ export class TableRendererService {
     ctx.fillStyle = '#1B4F72';
     ctx.fillRect(0, 0, totalWidth + 2, titleHeight);
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 22px Arial, sans-serif';
+    ctx.font = 'bold 22px DejaVu, Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('HOJA CLÍNICA — PASE DE TURNO', totalWidth / 2 + 1, 38);
 
@@ -85,7 +102,7 @@ export class TableRendererService {
     ctx.fillRect(0, headerY, totalWidth + 2, headerHeight);
 
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 15px Arial, sans-serif';
+    ctx.font = 'bold 15px DejaVu, Arial, sans-serif';
     ctx.textAlign = 'center';
 
     const headers = ['Categoría', 'Campo de Información', 'Espacio para Llenado'];
@@ -158,20 +175,20 @@ export class TableRendererService {
       // Texto — Categoría
       if (row.category) {
         ctx.fillStyle = '#1B4F72';
-        ctx.font = 'bold 13px Arial, sans-serif';
+        ctx.font = 'bold 13px DejaVu, Arial, sans-serif';
         ctx.textAlign = 'left';
         ctx.fillText(row.category, 10, y + 22);
       }
 
       // Texto — Campo
       ctx.fillStyle = '#2C3E50';
-      ctx.font = row.isHeader ? 'bold 13px Arial, sans-serif' : '13px Arial, sans-serif';
+      ctx.font = row.isHeader ? 'bold 13px DejaVu, Arial, sans-serif' : '13px DejaVu, Arial, sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText(row.field, colWidths[0] + 10, y + 22);
 
       // Texto — Valor
       ctx.fillStyle = '#17202A';
-      ctx.font = '13px Arial, sans-serif';
+      ctx.font = '13px DejaVu, Arial, sans-serif';
       ctx.textAlign = 'left';
       const maxValueWidth = colWidths[2] - 20;
       const valueText = this.truncateText(ctx, row.value, maxValueWidth);
